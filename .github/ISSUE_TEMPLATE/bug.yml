@@ -1,0 +1,33 @@
+name: Bug in a notebook or script
+description: Provide enough detail for someone else to reproduce or assess it.
+body:
+- type: textarea
+  id: field-0
+  attributes:
+    label: Path or notebook
+  validations:
+    required: true
+- type: textarea
+  id: field-1
+  attributes:
+    label: OS and Python version
+  validations:
+    required: true
+- type: textarea
+  id: field-2
+  attributes:
+    label: GPU and driver (or CPU / Mac)
+  validations:
+    required: true
+- type: textarea
+  id: field-3
+  attributes:
+    label: Exact command and error
+  validations:
+    required: true
+- type: textarea
+  id: field-4
+  attributes:
+    label: Expected behavior
+  validations:
+    required: true

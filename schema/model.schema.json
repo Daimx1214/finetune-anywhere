@@ -1,0 +1,231 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Fine-tuned model showcase entry",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "project_name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4000
+    },
+    "base_model": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4000
+    },
+    "quantization": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4000
+    },
+    "hardware_tested": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4000
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "maxLength": 80
+    },
+    "event": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "maxLength": 80
+    },
+    "members": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "github"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
+          },
+          "github": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,37}[a-zA-Z0-9])?$"
+          }
+        }
+      }
+    },
+    "one_liner": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "dataset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "description",
+        "size"
+      ],
+      "properties": {
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "link": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^https://[^\\s]+$",
+              "maxLength": 2048
+            },
+            {
+              "const": ""
+            }
+          ]
+        }
+      }
+    },
+    "model_link": {
+      "type": "string",
+      "pattern": "^https://(?:huggingface\\.co|modelscope\\.cn|www\\.modelscope\\.cn)/[^\\s]+$",
+      "maxLength": 2048
+    },
+    "demo_video": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^https://[^\\s]+$",
+          "maxLength": 2048
+        },
+        {
+          "const": ""
+        }
+      ]
+    },
+    "repo_link": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^https://[^\\s]+$",
+          "maxLength": 2048
+        },
+        {
+          "const": ""
+        }
+      ]
+    },
+    "before_after": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "prompt",
+        "base_output",
+        "finetuned_output"
+      ],
+      "properties": {
+        "prompt": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        },
+        "base_output": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        },
+        "finetuned_output": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        }
+      }
+    },
+    "training_tool": {
+      "enum": [
+        "unsloth",
+        "mlx",
+        "llama-factory",
+        "ms-swift",
+        "axolotl",
+        "trl",
+        "other"
+      ]
+    },
+    "training_platform": {
+      "enum": [
+        "colab",
+        "kaggle",
+        "local-nvidia",
+        "apple-silicon",
+        "cloud-gpu",
+        "other"
+      ]
+    },
+    "method": {
+      "enum": [
+        "lora",
+        "qlora",
+        "full",
+        "other"
+      ]
+    },
+    "runtime": {
+      "enum": [
+        "ollama",
+        "llama.cpp",
+        "lm-studio",
+        "mlx",
+        "vllm",
+        "transformers",
+        "other"
+      ]
+    }
+  },
+  "required": [
+    "project_name",
+    "slug",
+    "event",
+    "members",
+    "one_liner",
+    "base_model",
+    "model_link",
+    "quantization",
+    "runtime",
+    "hardware_tested",
+    "before_after"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "event": {
+            "const": "qwen-local-hackathon-2026"
+          }
+        },
+        "required": [
+          "event"
+        ]
+      },
+      "then": {
+        "required": [
+          "demo_video"
+        ],
+        "properties": {
+          "demo_video": {
+            "type": "string",
+            "pattern": "^https://[^\\s]+$",
+            "maxLength": 2048
+          }
+        }
+      }
+    }
+  ]
+}

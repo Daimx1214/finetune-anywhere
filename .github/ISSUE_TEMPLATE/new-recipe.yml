@@ -1,0 +1,27 @@
+name: Recipe proposal
+description: Provide enough detail for someone else to reproduce or assess it.
+body:
+- type: textarea
+  id: field-0
+  attributes:
+    label: Task and intended user
+  validations:
+    required: true
+- type: textarea
+  id: field-1
+  attributes:
+    label: Why fine-tuning helps
+  validations:
+    required: true
+- type: textarea
+  id: field-2
+  attributes:
+    label: Data source and license
+  validations:
+    required: true
+- type: textarea
+  id: field-3
+  attributes:
+    label: Evaluation plan
+  validations:
+    required: true

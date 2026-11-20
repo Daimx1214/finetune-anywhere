@@ -1,0 +1,10 @@
+model: starter
+recipe: commit-message-writer
+rank: 16
+alpha: 32
+learning_rate: 0.0002
+epochs: 1
+max_seq_length: 1024
+batch_size: 1
+gradient_accumulation_steps: 4
+seed: 42

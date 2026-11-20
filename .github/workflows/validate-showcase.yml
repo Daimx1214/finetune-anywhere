@@ -1,0 +1,59 @@
+name: Validate showcase
+on:
+  pull_request:
+    paths: ['showcase/**']
+permissions:
+  contents: read
+  pull-requests: read
+jobs:
+  validate:
+    name: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out trusted validator
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: trusted
+          persist-credentials: false
+      - name: Check out submission as data
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: submission
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install 'PyYAML==6.0.3' 'jsonschema==4.26.0'
+      - name: Read changed files from GitHub
+        id: metadata
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              ...context.repo, pull_number: context.issue.number, per_page: 100
+            });
+            const names = [...new Set(files.flatMap(f => f.previous_filename ? [f.filename, f.previous_filename] : [f.filename]))];
+            fs.writeFileSync('changed.json', JSON.stringify(names));
+            const entry = names.some(n => /^showcase\/(?!_template\/)[^/]+\/[^/]+\//.test(n));
+            core.setOutput('entry', entry ? 'true' : 'false');
+            if (!entry) fs.writeFileSync('results.json', JSON.stringify({passed: true, errors: [], warnings: [], late: false}));
+      - name: Validate submission
+        if: steps.metadata.outputs.entry == 'true'
+        env:
+          PR_CREATED_AT: ${{ github.event.pull_request.created_at }}
+        run: >-
+          python trusted/scripts/validate_showcase.py
+          --root submission --changed-json changed.json
+          --created-at "$PR_CREATED_AT" --check-urls --output results.json
+      - name: Save machine-readable results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: showcase-results
+          path: results.json
+          if-no-files-found: warn
+          retention-days: 7

@@ -1,0 +1,8 @@
+torch==2.8.0
+transformers==5.17.0
+trl==1.15.0
+peft==0.22.0
+datasets==4.8.5
+accelerate==1.16.0
+PyYAML==6.0.3
+jupyterlab

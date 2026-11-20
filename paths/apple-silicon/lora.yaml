@@ -1,0 +1,9 @@
+lora_parameters:
+  rank: 16
+  scale: 2.0
+  dropout: 0.0
+seed: 42
+steps_per_eval: 25
+steps_per_report: 5
+save_every: 25
+val_batches: 4

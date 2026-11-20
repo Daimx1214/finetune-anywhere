@@ -1,0 +1,26 @@
+# Submission form, not a published entry. Complete it in your own entry folder.
+project_name: ''
+slug: ''
+event: ''
+members:
+- name: ''
+  github: ''
+one_liner: ''
+base_model: ''
+training_tool: ''
+training_platform: ''
+method: ''
+dataset:
+  description: ''
+  size: 0
+  link: ''
+model_link: ''
+quantization: ''
+runtime: ''
+hardware_tested: ''
+demo_video: ''
+repo_link: ''
+before_after:
+  prompt: ''
+  base_output: ''
+  finetuned_output: ''

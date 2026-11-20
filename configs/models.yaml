@@ -1,0 +1,19 @@
+# Verified against official model cards on 2026-11-20.
+# Sizes are total parameters in billions, not the rounded marketing size.
+default: starter
+models:
+  tiny:
+    id: Qwen/Qwen2.5-0.5B-Instruct
+    params_b: 0.49
+    license: Apache-2.0
+    good_for: First smoke test and low-memory inference
+  starter:
+    id: Qwen/Qwen2.5-1.5B-Instruct
+    params_b: 1.54
+    license: Apache-2.0
+    good_for: Small structured tasks and first useful adapter
+  larger:
+    id: Qwen/Qwen2.5-3B-Instruct
+    params_b: 3.09
+    license: Qwen Research License (read the model card)
+    good_for: More capacity when memory and license fit

@@ -1,0 +1,69 @@
+name: Comment on showcase PR
+on:
+  workflow_run:
+    workflows: ['Validate showcase']
+    types: [completed]
+permissions:
+  actions: read
+  contents: read
+  pull-requests: write
+  issues: write
+jobs:
+  comment:
+    if: github.event.workflow_run.event == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # No checkout, no PR code and no execution of artifact contents.
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const run = context.payload.workflow_run;
+            if (run.repository.id !== context.payload.repository.id) return;
+            let candidates = run.pull_requests || [];
+            if (!candidates.length) {
+              const open = await github.paginate(github.rest.pulls.list, {...context.repo, state: 'open', per_page: 100});
+              candidates = open.filter(p => p.head.sha === run.head_sha && p.head.repo?.id === run.head_repository.id);
+            }
+            if (candidates.length !== 1) return;
+            const {data: pr} = await github.rest.pulls.get({...context.repo, pull_number: candidates[0].number});
+            if (pr.state !== 'open' || pr.head.sha !== run.head_sha || pr.head.repo?.id !== run.head_repository.id) return;
+            const files = await github.paginate(github.rest.pulls.listFiles, {...context.repo, pull_number: pr.number});
+            if (!files.some(f => /^showcase\/(?!_template\/)[^/]+\/[^/]+\//.test(f.filename))) return;
+            const artifacts = await github.paginate(github.rest.actions.listWorkflowRunArtifacts, {...context.repo, run_id: run.id});
+            const artifact = artifacts.find(a => a.name === 'showcase-results' && !a.expired);
+            let result = {passed: false, errors: ['Validation could not produce results. Open the check log for details.'], warnings: []};
+            if (artifact && artifact.size_in_bytes < 200000) {
+              const archive = await github.rest.actions.downloadArtifact({...context.repo, artifact_id: artifact.id, archive_format: 'zip'});
+              const fs = require('fs');
+              const path = require('path').join(process.env.RUNNER_TEMP, 'showcase-results.zip');
+              fs.writeFileSync(path, Buffer.from(archive.data));
+              try {
+                const raw = require('child_process').execFileSync('unzip', ['-p', path, 'results.json'], {maxBuffer: 100000, timeout: 5000});
+                const parsed = JSON.parse(raw.toString());
+                if (typeof parsed.passed !== 'boolean' || !Array.isArray(parsed.errors) || !Array.isArray(parsed.warnings)) throw Error('Invalid result shape');
+                if (![...parsed.errors, ...parsed.warnings].every(v => typeof v === 'string')) throw Error('Invalid result text');
+                result = parsed;
+              } catch (error) { core.warning('Invalid results artifact: ' + error.message); }
+            }
+            const safe = s => s.slice(0, 1200).replace(/@/g, '@\u200b').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            const passed = result.passed && run.conclusion === 'success';
+            const marker = '<!-- finetune-anywhere-showcase-check -->';
+            const fixes = result.errors.slice(0, 20).map(s => '- ' + safe(s)).join('\n');
+            const warnings = result.warnings.slice(0, 10).map(s => '- ' + safe(s)).join('\n');
+            const body = `${marker}\n## Showcase check: ${passed ? 'passed' : 'needs fixes'}\n\n${fixes || (passed ? 'The entry passed automated validation.' : 'Open the validation check for the failure details.')}\n\n${warnings ? 'Warnings:\n' + warnings : ''}\n\n[Validation run](${run.html_url})`;
+            const comments = await github.paginate(github.rest.issues.listComments, {...context.repo, issue_number: pr.number});
+            const previous = comments.find(c => c.user.type === 'Bot' && c.body.includes(marker));
+            if (previous) await github.rest.issues.updateComment({...context.repo, comment_id: previous.id, body});
+            else await github.rest.issues.createComment({...context.repo, issue_number: pr.number, body});
+            // Labels and deadline derive from GitHub metadata, never artifact claims.
+            const hackathon = files.some(f => f.filename.startsWith('showcase/qwen-local-hackathon-2026/'));
+            const community = files.some(f => f.filename.startsWith('showcase/community/'));
+            const late = hackathon && Date.parse(pr.created_at) >= Date.parse('2026-11-28T19:00:00Z');
+            const labels = ['showcase', ...(hackathon ? ['hackathon-2026'] : []), ...(community ? ['community'] : []), ...(late ? ['late'] : [])];
+            for (const name of ['hackathon-2026', 'community', 'late']) {
+              if (!labels.includes(name) && pr.labels.some(l => l.name === name)) {
+                await github.rest.issues.removeLabel({...context.repo, issue_number: pr.number, name});
+              }
+            }
+            await github.rest.issues.addLabels({...context.repo, issue_number: pr.number, labels});

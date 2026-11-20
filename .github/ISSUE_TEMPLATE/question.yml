@@ -1,0 +1,15 @@
+name: Question
+description: Ask for help. Discussions are preferred for general questions.
+body:
+- type: textarea
+  id: field-0
+  attributes:
+    label: What are you trying to do?
+  validations:
+    required: true
+- type: textarea
+  id: field-1
+  attributes:
+    label: What have you tried?
+  validations:
+    required: true
