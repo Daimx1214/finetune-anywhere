@@ -14,7 +14,7 @@ Checked on 20 November 2026. Distinguish runnable source, dependency resolution,
 | Alternative trainers | Official configuration/API references checked; tool releases verified | Install and run each config on supported hardware |
 | Model hubs | HF and ModelScope CLI help checked; ModelScope Python method signatures inspected | Upload a real trained artifact to both hubs |
 | Showcase | Temporary test fixtures exercise success, readable failures, late status and all table locations | Exercise a real submission PR after model training; do not publish fictional results |
-| GitHub Actions | Workflow source and trust boundaries reviewed; tests run in CI after publication | Verify an actual fork PR, artifact comment update and labels |
+| GitHub Actions | Published repository checks and table-generation workflow both passed; all 25 tests passed on GitHub | Verify an actual fork PR, artifact comment update and labels |
 
 No completed fine-tuning run, quality gain, GPU memory benchmark or latency result is claimed. A successful environment resolver is not evidence that training kernels work. Pins are a reproducible candidate stack, not a hardware-tested promise. Promote each path's status only after its full training-to-inference run succeeds.
 
@@ -28,6 +28,7 @@ No completed fine-tuning run, quality gain, GPU memory benchmark or latency resu
 - Training uses full-conversation loss. Assistant-only loss is not enabled without verifying model-specific template masks.
 - MLX defaults to eight adapter layers and 100 iterations. Scale 2 with rank 16 corresponds to the alpha/rank ratio used by the GPU recipe, but iterations, layers and optimizer behavior do not make the runs equivalent.
 - MLX fusion reloads the full-precision base instead of fusing and dequantizing a lossy base. Conversion to GGUF goes through llama.cpp because the built-in MLX exporter has architecture restrictions.
+- NVIDIA run manifests separate training, preparation and export durations, record GPU/package information and hash all dataset splits. The manifest is saved before export so a conversion failure does not erase training evidence.
 - CPU float32 merging is portable but may need substantial RAM. It is a separate operation from low-memory training.
 - Memory numbers are decimal GB. The calculator exposes KV architecture assumptions. Its training budget is a labelled heuristic, not a measured architecture-specific activation calculation.
 - compare.py uses local OpenAI-compatible servers so it works across hardware without installing two model stacks. It saves actual text and raw JSON. Unit tests use a clearly isolated mock HTTP server, not a published model example.
@@ -78,13 +79,13 @@ Run each recipe on at least one complete training-to-local-inference path and ad
 
 ## Repository administration
 
-- Enable Discussions and create Q&A, Show and tell, and Ideas categories.
-- Set the repository description to the one-line pitch.
-- Add topics: fine-tuning, llm, qwen, lora, qlora, unsloth, mlx, llama-factory, gguf, ollama, llama-cpp, local-llm, colab, kaggle, hackathon.
+- Completed: Discussions enabled; Q&A, Show and tell, and Ideas categories are present.
+- Completed: repository is public under the default maintainer account and its description is set.
+- Completed topics: fine-tuning, llm, qwen, lora, qlora, unsloth, mlx, llama-factory, gguf, ollama, llama-cpp, local-llm, colab, kaggle, hackathon.
 - Upload a social preview image. No fabricated demo screenshot is supplied.
 - Install the all-contributors app and add people manually after merging.
 - Protect main and require repository checks. Require showcase validation for showcase submissions. A path-filtered validate workflow cannot be a universal required check without leaving unrelated PRs pending; use conditional rules or change the workflow to always run a no-op job outside showcase changes.
-- Create labels: showcase, hackathon-2026, community and late.
+- Completed: showcase, hackathon-2026, community and late labels created.
 - Decide whether table-update bot pushes bypass protection or should become PRs.
 - Run a real valid and a deliberately broken submission through a fork PR, verify comments update in place, and check late labels with a controlled test of the timestamp logic.
 - Record the hero GIF and replace the README's event block with actual winners after results are supplied.

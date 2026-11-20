@@ -1,6 +1,8 @@
 """Train a recipe with QLoRA, save adapters, and optionally export GGUF."""
 
 import argparse
+import hashlib
+import importlib.metadata
 import json
 import sys
 import time
@@ -89,24 +91,45 @@ def main():
         eval_dataset=dataset["valid"],
         args=training,
     )
-    trainer.train(resume_from_checkpoint=a.resume)
+    training_started = time.monotonic()
+    train_result = trainer.train(resume_from_checkpoint=a.resume)
+    training_seconds = time.monotonic() - training_started
     model.save_pretrained(str(output / "adapter"))
     tokenizer.save_pretrained(str(output / "adapter"))
+    import torch
+
+    manifest = {
+        "config": cfg,
+        "model_alias": a.model or cfg["model"],
+        "base_revision": getattr(model.config, "_commit_hash", None),
+        "training_seconds": training_seconds,
+        "preparation_seconds": training_started - started,
+        "max_steps": a.max_steps,
+        "metrics": train_result.metrics,
+        "gpu": torch.cuda.get_device_name(0),
+        "gpu_total_bytes": torch.cuda.get_device_properties(0).total_memory,
+        "versions": {
+            name: importlib.metadata.version(name)
+            for name in ["unsloth", "torch", "transformers", "trl", "peft", "datasets"]
+        },
+        "data_sha256": {
+            split: hashlib.sha256((data / f"{split}.jsonl").read_bytes()).hexdigest()
+            for split in ["train", "valid", "eval"]
+        },
+        "export_completed": False,
+    }
+    # Preserve training evidence even if the later merge or GGUF export runs out of memory.
+    (output / "run.json").write_text(json.dumps(manifest, indent=2) + "\n")
+    export_started = time.monotonic()
     model.save_pretrained_merged(str(output / "merged"), tokenizer, save_method="merged_16bit")
     if a.export_gguf:
         model.save_pretrained_gguf(str(output / "gguf"), tokenizer, quantization_method="q4_k_m")
-    (output / "run.json").write_text(
-        json.dumps(
-            {
-                "config": cfg,
-                "model_alias": a.model or cfg["model"],
-                "elapsed_seconds": time.monotonic() - started,
-                "max_steps": a.max_steps,
-            },
-            indent=2,
-        )
-        + "\n"
+    manifest.update(
+        export_completed=True,
+        export_seconds=time.monotonic() - export_started,
+        elapsed_seconds=time.monotonic() - started,
     )
+    (output / "run.json").write_text(json.dumps(manifest, indent=2) + "\n")
     print(f"Saved run to {output}. Evaluate before choosing it over the base model.")
 
 
