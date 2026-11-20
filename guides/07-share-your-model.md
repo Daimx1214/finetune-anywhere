@@ -10,9 +10,11 @@ Repository model IDs belong in the registry. A model card uploaded to a separate
 
 ## Hugging Face CLI
 
-Install the Hub client in your active environment. Read the model card before making the repository public.
+Use a separate upload environment so Hub client upgrades cannot change your training stack. Read the model card before making the repository public.
 
 ```bash
+python3.11 -m venv .venv-share
+source .venv-share/bin/activate
 python -m pip install 'huggingface-hub==2.4.0'
 hf auth login
 read -r -p 'Your Hub username: ' HF_USER
