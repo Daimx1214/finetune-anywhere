@@ -4,7 +4,7 @@ Prerequisites: an Apple Silicon Mac, a macOS version supported by [MLX](https://
 
 ## Choose a size
 
-On 8 GB unified memory start with `tiny`, four-bit base weights, batch 1 and short sequences. On 16 GB start with `starter`. With 32 GB or more, consider `larger` if its license fits. These are cautious starting choices, not guarantees. macOS, context, activations and other apps share the same memory.
+On 8 GB unified memory start with `tiny`, four-bit base weights, batch 1 and short sequences. On 16 GB start with `starter`. With 32 GB or more, use `larger`. All three are Apache-2.0 text models. macOS, context, activations and other apps share the same memory.
 
 ## Install
 
@@ -25,7 +25,7 @@ The wrapper validates all splits, converts the base to four-bit MLX, trains an a
 bash paths/apple-silicon/train_mlx.sh json-extractor starter 100
 ```
 
-For a small setup check use `bash paths/apple-silicon/train_mlx.sh json-extractor tiny 2`. Two iterations do not prove the fine-tune helped. The shared MLX config sets rank 16, scale 2, seed 42 and regular validation. The wrapper uses eight layers to limit adapter training cost.
+For a small setup check use `bash paths/apple-silicon/train_mlx.sh json-extractor tiny 2`. The shared MLX config sets rank 16, scale 2, seed 42 and regular validation. The wrapper uses eight layers to limit adapter training cost.
 
 ## Run natively
 
@@ -38,8 +38,6 @@ Start the unchanged `outputs/json-extractor/mlx/base-4bit` on port 8080 in a sec
 
 ## Ollama and LM Studio
 
-Use [the llama.cpp conversion steps](../../guides/05-quantize.md) with `MERGED=outputs/json-extractor/mlx/merged`. MLX's built-in GGUF exporter has architecture limits; use llama.cpp for this Qwen path. Once converted, follow the complete [Ollama or LM Studio instructions](../../guides/06-run-locally.md). Evaluate the GGUF again, then [share it](../../guides/07-share-your-model.md).
+Use [the llama.cpp conversion steps](../../guides/05-quantize.md) with `MERGED=outputs/json-extractor/mlx/merged`. The wrapper saves the non-thinking Qwen3 template. Convert the merged weights with llama.cpp. Once converted, follow the complete [Ollama or LM Studio instructions](../../guides/06-run-locally.md). Evaluate the GGUF again, then [share it](../../guides/07-share-your-model.md).
 
-## Common errors
-
-Metal allocation failure: close apps, choose `tiny`, shorten context and keep batch 1. Unsupported package: check macOS and arm64 Python, not an x86 Python under Rosetta. Bad answers after merging: confirm the same base alias was used for training and fusion. Adapter resume with MLX restores adapter weights; do not assume optimizer state is restored. Keep prior outputs before rerunning the wrapper, since it uses fixed output paths.
+[Troubleshooting](../../guides/faq.md).

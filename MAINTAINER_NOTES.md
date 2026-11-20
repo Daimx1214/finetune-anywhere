@@ -2,28 +2,49 @@
 
 ## Validation status
 
-Checked on 20 November 2026. Distinguish runnable source, dependency resolution, CLI checks and completed training.
+Updated 21 November 2026. The maintainer will run the Colab notebook on a free T4 and return its evidence ZIP. Browser automation and GPU execution were stopped at the maintainer's request. No training outputs or performance figures have been fabricated.
 
 | Area | Evidence | Remaining check |
 | --- | --- | --- |
-| Utility scripts | 25 local automated tests cover data, conversion, memory, HTTP comparison, schema, deadline and generated tables | Expand tests with real community submissions |
-| Recipe data | 100 train, 12 validation and 12 evaluation examples per recipe; structural and leakage checks; actual tokenizer counts checked for the default recipe (71 to 79 tokens) | Independent human review and more diverse real task data |
-| Notebooks | Valid notebook structure, Python cells parse, no outputs or execution counts | Execute Colab and Kaggle notebooks in fresh GPU sessions |
-| NVIDIA stack | Exact dependency pins resolved for Linux x86_64, Python 3.11; CUDA 12.8 Torch selected | Run on a T4 and a local NVIDIA GPU; record driver and peak VRAM |
-| MLX stack | Installed on Apple M4; lora, fuse and convert CLI options checked | Training stopped before loading weights because disk had less than 1 GB free; complete train, fuse, quantize and inference with adequate disk |
-| Alternative trainers | Official configuration/API references checked; tool releases verified | Install and run each config on supported hardware |
-| Model hubs | HF and ModelScope CLI help checked; ModelScope Python method signatures inspected | Upload a real trained artifact to both hubs |
-| Showcase | Temporary test fixtures exercise success, readable failures, late status and all table locations | Exercise a real submission PR after model training; do not publish fictional results |
-| GitHub Actions | Published repository checks and table-generation workflow both passed; all 25 tests passed on GitHub | Verify an actual fork PR, artifact comment update and labels |
+| Models | Official Hugging Face cards/API and Unsloth catalog checked for all six reviewed small models | Review model revisions when updating the registry |
+| Recipe data | 60 independently authored scenarios per recipe; 40 train, 10 validation, 10 evaluation; original MIT data | Domain review and broader real-world evaluation |
+| Cloud notebooks | Explicit loading, LoRA, template, data, training, inference, saving and export cells; install sequence checked against current official Unsloth notebooks | Maintainer runs the full T4 workflow and supplies run-evidence.zip |
+| Training environments | Existing Linux pins retained; Mac CLI environment installed during initial build | Hardware training, adapter fusion and quantized inference for the new Qwen3 defaults |
+| Alternative tools | Qwen3 reasoning-template settings and merge/export handling updated | End-to-end runs on supported GPUs |
+| Public results | None yet | Publish only outputs from the returned run, with failures and exact settings |
 
-No completed fine-tuning run, quality gain, GPU memory benchmark or latency result is claimed. A successful environment resolver is not evidence that training kernels work. Pins are a reproducible candidate stack, not a hardware-tested promise. Promote each path's status only after its full training-to-inference run succeeds.
+The initial repository's CI passed with 25 tests. The refresh passes 34 local tests plus notebook structure/output checks. All 240 examples also pass exact token-length and train/inference template equivalence checks with each of the three actual Qwen3 tokenizers (720 example checks). Dependency resolution, API inspection and tests do not substitute for a complete GPU run. The earlier Mac attempt stopped before training because the filesystem had less than 1 GB free; it provides no model-quality evidence.
+
+## Model review
+
+The registry is the only source of model IDs, including the Unsloth catalog counterparts. License verification uses the official Qwen cards; the Qwen3 Unsloth API metadata references those base models but does not repeat a license field. Official cards report rounded total sizes of 0.6B, 1.7B and 4B for the selected Qwen3 models. They are text-generation models under Apache 2.0. The small Qwen3.5 cards and Unsloth listings were checked too: 0.8B, 2B and 4B are Apache 2.0 image-text models. They are recorded as reviewed candidates, not selectable aliases.
+
+Decision: use the text-only Qwen3 family across all existing paths. Unsloth publishes Qwen3.5 vision notebooks, but that is not evidence of identical text-only training, MLX fusion and llama.cpp export behavior for the multimodal weights. No cross-tool multimodal compatibility claim is made. The older non-Apache larger model was removed.
+
+The memory table uses the rounded parameter totals explicitly stated in model cards. Serialized tensor metadata can count stored tensors differently; these estimates are not downloaded file sizes or measured VRAM. Registry revisions record what was reviewed. Run manifests separately record the revision actually loaded by the trainer.
+
+The saved Qwen3 tokenizer prepends a Jinja assignment fixing `enable_thinking` to false. The original role delimiters and empty thinking prefix are preserved. Unsloth, MLX and TRL save this template with their outputs. LLaMA-Factory uses the Qwen3 reasoning template with thinking disabled; SWIFT adds the non-thinking prefix during training; Axolotl receives the configured tokenizer's Jinja template. The shared adapter merger writes the same configured tokenizer.
+
+## Cloud notebook installation
+
+The Colab notebook follows the current official Qwen3 reasoning/conversation notebook: install the Colab helper packages, install Unsloth's stack without replacing the whole host dependency tree, install kernels, then select Transformers 4.57.6 and TRL 0.22.2. Kaggle follows Unsloth's platform notebook with its CUDA wheel setup. Both keep install logs visible and add PyYAML for the registry. Neither installs the 100-line Linux requirements file.
+
+This is a checked installation procedure, not a claimed successful T4 execution. Upstream unpinned packages can change. The evidence report captures actual versions, loaded revision, dataset hashes, settings, timings, peak allocated GPU memory and export outcome. A fresh session is needed after replacing already-imported libraries.
+
+The notebooks record base answers with the adapter disabled, then train and evaluate the same held-out prompts. Targets never enter the inference prompt. Before/after results are for the shared four-bit base plus adapter, before GGUF export. Exported GGUF quality is a separate evaluation. The small report ZIP excludes weights and credentials.
+
+## Data authorship and splits
+
+All 240 scenarios were written individually for this repository. There is no identifier substitution or combinatorial expansion. JSONL serialization and unified-diff formatting were performed programmatically; scenario content and targets were supplied explicitly. The data is synthetic, original and MIT-licensed, not scraped user records or copied repository code. Each data/manifest.json records provenance and split counts.
+
+The new datasets deliberately trade repetitive volume for broader coverage. Each has 40 training, 10 validation and 10 evaluation scenarios. Training uses three epochs. The SQL examples span distinct schemas, and support examples supply distinct policies. Templates such as chat roles and SQL syntax naturally recur, but cases are not generated by changing product or table numbers. These remain small teaching datasets, not production benchmarks; add domain-specific examples and independently sourced evaluation data.
 
 ## Decisions where the spec was silent
 
 - Use Python 3.11 across training and contributor tooling. Utilities use the standard library except YAML/schema handling and optional tokenizer-based counting.
-- Use established Qwen2.5 instruction models rather than a moving latest-model default. Exact IDs, parameter counts and licenses live in the registry. The smallest model is for smoke tests; the middle model is the default. The larger model has a different license, explicitly called out.
+- Use Apache-2.0 text-only Qwen3 models. Exact IDs, catalog counterparts and reviewed revisions live in the registry.
 - All guide commands start from the repository root. Windows GPU training uses WSL2. Keep each trainer in its own environment.
-- The four recipe datasets are original rule-generated teaching data. Their structures and target rules were checked during authoring. They are MIT-licensed, intentionally repetitive and not real-world benchmarks. Evaluation entities are disjoint but templates overlap.
+- Dataset size is 60 authored scenarios per recipe, split 40/10/10. See the data authorship section above.
 - Add a validation split separate from the final evaluation set. The trainer never loads evaluation data for fitting or hyperparameter selection.
 - Training uses full-conversation loss. Assistant-only loss is not enabled without verifying model-specific template masks.
 - MLX defaults to eight adapter layers and 100 iterations. Scale 2 with rank 16 corresponds to the alpha/rank ratio used by the GPU recipe, but iterations, layers and optimizer behavior do not make the runs equivalent.
@@ -45,7 +66,12 @@ No completed fine-tuning run, quality gain, GPU memory benchmark or latency resu
 
 ## Verified sources
 
-Model cards were fetched directly from the official Hugging Face repositories named in configs/models.yaml. Recorded total parameters: 0.49B, 1.54B and 3.09B. The first two cards specify Apache-2.0; the third specifies its Qwen Research License. Open the registry ID on Hugging Face to inspect the current license and model revision.
+- [Official Unsloth Qwen3 Colab notebook](https://github.com/unslothai/notebooks/blob/main/nb/Qwen3_%2814B%29-Reasoning-Conversational.ipynb).
+- [Official Unsloth Qwen3 Kaggle notebook](https://github.com/unslothai/notebooks/blob/main/nb/Kaggle-Qwen3_%284B%29-Instruct.ipynb).
+- [Unsloth model catalog](https://huggingface.co/unsloth) and [official Qwen models](https://huggingface.co/Qwen).
+- [SWIFT reasoning parameters](https://github.com/modelscope/ms-swift/blob/main/docs/source_en/Instruction/Command-line-parameters.md) and [LLaMA-Factory templates](https://github.com/hiyouga/LLaMA-Factory/blob/main/src/llamafactory/data/template.py).
+
+Model cards and API metadata were fetched directly from the Hugging Face repositories named in configs/models.yaml. All selected and reviewed model licenses are Apache 2.0. Catalog counterparts were verified under the Unsloth organization.
 
 - [Unsloth source and installation](https://github.com/unslothai/unsloth), with package metadata checked for the pinned release.
 - [MLX LoRA guide](https://github.com/ml-explore/mlx-lm/blob/main/mlx_lm/LORA.md), plus installed CLI help and adapter configuration source.
@@ -62,7 +88,7 @@ Model cards were fetched directly from the official Hugging Face repositories na
 
 - AMD training folder: omitted because no end-to-end ROCm training setup was validated on available hardware. This does not mean AMD cannot train models.
 - Full Modal deployment: the architecture is described with the official GPU guide, but an untested provider-specific app is not presented as working code.
-- Remote notebook opening, authentication and GPU allocation require the user's platform accounts. Badge URLs target the published repository; they do not prove a notebook executed successfully.
+- A complete T4 run is intentionally left to the maintainer. Badge links and source checks do not establish successful execution.
 - AWQ/GPTQ commands are omitted because hardware, model and serving-version compatibility must be checked for a specific deployment.
 - Guaranteed times, measured speeds, free GPU quotas, costs and claims of universal compatibility are omitted.
 

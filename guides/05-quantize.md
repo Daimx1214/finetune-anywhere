@@ -38,6 +38,7 @@ To make a base control, download the same unmodified model, then convert and qua
 
 ```bash
 hf download "$(python scripts/model_id.py starter)" --local-dir outputs/base-hf
+python scripts/configure_chat.py outputs/base-hf
 python outputs/llama.cpp/convert_hf_to_gguf.py outputs/base-hf --outfile outputs/base-f16.gguf --outtype f16
 outputs/llama.cpp/build/bin/llama-quantize outputs/base-f16.gguf outputs/base-q4_k_m.gguf Q4_K_M
 ```

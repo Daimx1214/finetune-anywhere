@@ -12,14 +12,14 @@ Fine-tune a small open model and run it on your own machine. Colab, Kaggle, NVID
 
 | Your hardware | Start here | Tool | Plan for |
 | --- | --- | --- | --- |
-| No GPU, free notebook | [Colab](paths/colab/) | Unsloth | An afternoon, subject to GPU availability |
-| Kaggle account | [Kaggle](paths/kaggle/) | Unsloth | An afternoon, subject to GPU availability |
+| No GPU, free notebook | [Colab](paths/colab/) | Unsloth | An afternoon |
+| Kaggle account | [Kaggle](paths/kaggle/) | Unsloth | An afternoon |
 | NVIDIA on Linux or Windows/WSL | [Your GPU](paths/nvidia-gpu/) | Unsloth | An afternoon including setup |
 | Apple Silicon Mac | [Mac](paths/apple-silicon/) | MLX-LM | An afternoon including downloads |
 | CPU laptop | [Cloud training, local inference](paths/cpu-only/) | Ollama or llama.cpp | An afternoon plus cloud training |
 | Rented GPU | [Cloud GPU](paths/cloud-gpu/) | Unsloth | Setup plus training; stop billing afterward |
 
-Time is a planning allowance, not a benchmark. [Start here](guides/00-start-here.md) if these tools are new to you. [Validation status](MAINTAINER_NOTES.md) records what has actually been run.
+[Start here](guides/00-start-here.md) if these tools are new to you. The defaults are Apache-2.0 Qwen3 text models.
 
 ## The seven steps
 
@@ -37,9 +37,9 @@ Weights only, in decimal GB. Parameter counts come from the [model registry](con
 
 | Alias | Parameters | 16 bit | 8 bit | 4 bit |
 | --- | ---: | ---: | ---: | ---: |
-| tiny | 0.49B | 0.98 GB | 0.49 GB | 0.27 GB |
-| starter | 1.54B | 3.08 GB | 1.54 GB | 0.85 GB |
-| larger | 3.09B | 6.18 GB | 3.09 GB | 1.70 GB |
+| tiny | 0.6B | 1.20 GB | 0.60 GB | 0.33 GB |
+| starter | 1.7B | 3.40 GB | 1.70 GB | 0.94 GB |
+| larger | 4.0B | 8.00 GB | 4.00 GB | 2.20 GB |
 
 Formula: parameters × bytes per parameter. Use 2 bytes for 16 bit, 1 for 8 bit, about 0.55 for 4 bit including quantization metadata. Context adds KV cache. Runtime, activations and the operating system need more memory. Training needs more than inference. Discrete GPU VRAM is separate from RAM.
 
@@ -72,7 +72,7 @@ See the [decision tree and comparison](guides/choose-your-tool.md).
 | [SQL generator](recipes/sql-generator/) | Write a read-only query for a supplied schema |
 | [Support bot from docs](recipes/support-bot-from-docs/) | Answer from a policy and abstain when it is silent |
 
-Each includes original licensed data and a held-out split. These are teaching examples, not evidence of model improvement.
+Each includes 60 original MIT-licensed examples: 40 for training, 10 for validation and 10 for held-out evaluation.
 
 ## Community showcase
 
@@ -98,7 +98,7 @@ A free online build week organized by **Qwen Pakistan**, 23 to 29 November 2026.
 
 ## Credits
 
-Built for the community by M Junaid, Qwen Ambassador and organizer of **Qwen Pakistan**. This is an independent community resource, not official Alibaba or Qwen team material.
+Built for the community by M Junaid, Qwen Ambassador and organizer of **Qwen Pakistan**. An independent community resource.
 
 Thanks to [Qwen](https://github.com/QwenLM), [Unsloth](https://github.com/unslothai/unsloth), [MLX](https://github.com/ml-explore/mlx-lm), [LLaMA-Factory](https://github.com/hiyouga/LLaMA-Factory), [ms-swift](https://github.com/modelscope/ms-swift), [Axolotl](https://github.com/axolotl-ai-cloud/axolotl), [TRL](https://github.com/huggingface/trl), [PEFT](https://github.com/huggingface/peft), [llama.cpp](https://github.com/ggml-org/llama.cpp), [Ollama](https://github.com/ollama/ollama), [LM Studio](https://lmstudio.ai/) and [vLLM](https://github.com/vllm-project/vllm).
 

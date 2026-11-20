@@ -12,7 +12,9 @@ from common import ROOT, registry
 
 def check(root):
     errors = []
-    models = [m["id"] for m in registry()["models"].values()]
+    catalog = registry()
+    entries = list(catalog["models"].values()) + catalog.get("reviewed_multimodal", [])
+    models = [m[key] for m in entries for key in ["id", "unsloth_id"] if key in m]
     excluded = {".git", "outputs", "__pycache__", ".pytest_cache", ".ruff_cache", "node_modules"}
     for path in root.rglob("*"):
         rel = path.relative_to(root)

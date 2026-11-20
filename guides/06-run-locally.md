@@ -14,7 +14,7 @@ PARAMETER stop "<|im_end|>"
 PARAMETER stop "<|im_start|>"
 ```
 
-The GGUF carries the tokenizer's Qwen chat template. Ollama imports recognized model templates; deliberately avoid replacing it with a hand-written template that may corrupt multi-turn messages. Verify the imported template with `ollama show recipe-local --modelfile` and compare behavior with llama.cpp. If recognition fails, update Ollama and check the export rather than guessing delimiters.
+The GGUF carries the tokenizer's Qwen3 chat template with non-thinking mode saved by the training paths. Ollama imports recognized model templates; deliberately avoid replacing it with a hand-written template that may corrupt multi-turn messages. Verify the imported template with `ollama show recipe-local --modelfile` and compare behavior with llama.cpp. If recognition fails, update Ollama and check the export rather than guessing delimiters.
 
 ```bash
 ollama create recipe-local -f outputs/Modelfile

@@ -11,6 +11,6 @@ jupyter lab tools/trl-peft/finetune_trl_peft.ipynb
 
 Run the notebook in order. It loads the `starter` alias, uses the shared chat data, trains LoRA and saves both adapter and merged model. Full-precision base weights make the mechanics clear but use more memory than the Unsloth QLoRA route.
 
-The notebook's merged directory is `outputs/trl/merged`. Use it in [GGUF export](../../guides/05-quantize.md), then [evaluate](../../guides/04-evaluate.md) and [run locally](../../guides/06-run-locally.md). The repository ships no invented training outputs.
+The notebook's merged directory is `outputs/trl/merged`. Use it in [GGUF export](../../guides/05-quantize.md), then [evaluate](../../guides/04-evaluate.md) and [run locally](../../guides/06-run-locally.md).
 
 Sources: [TRL SFTTrainer](https://huggingface.co/docs/trl/sft_trainer) and [PEFT LoRA](https://huggingface.co/docs/peft/conceptual_guides/lora).

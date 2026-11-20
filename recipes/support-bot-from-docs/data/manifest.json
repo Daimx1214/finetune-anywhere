@@ -1,0 +1,10 @@
+{
+  "license": "MIT",
+  "provenance": "Original, individually authored synthetic scenarios. No scraped customer records or copied source code.",
+  "splits": {
+    "train": 40,
+    "valid": 10,
+    "eval": 10
+  },
+  "split_policy": "Scenarios authored separately for each split; no identifier-substitution expansion."
+}

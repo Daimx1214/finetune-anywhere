@@ -1,24 +1,36 @@
 # Fine-tune on Kaggle
 
-Prerequisites: a Kaggle account, available NVIDIA GPU runtime, internet and a place to save exports. Plan an afternoon; resource availability and training duration vary. [Open the notebook](https://www.kaggle.com/kernels/welcome?src=https://raw.githubusercontent.com/junaiddshaukat/finetune-anywhere/main/paths/kaggle/finetune_unsloth_kaggle.ipynb).
+Train a Qwen3 text model, compare real before/after answers and export a local model. You need a Kaggle account and a GPU runtime. Plan an afternoon for the first run.
 
-## Setup and training
+[Open the notebook](https://www.kaggle.com/kernels/welcome?src=https://raw.githubusercontent.com/junaiddshaukat/finetune-anywhere/main/paths/kaggle/finetune_unsloth_kaggle.ipynb).
 
-Create or import a notebook, enable a GPU accelerator and turn Internet on in settings. Account verification or quota availability may affect access. If the import link does not work, download the notebook from this folder and use File > Import Notebook. Outputs go under `/kaggle/working`. Save a version with outputs before ending the session.
+## Run the notebook
 
-Run the notebook cells in order: GPU check, repository clone, pinned dependencies, storage setup, dataset validation, training and GGUF export. Every non-obvious step has an explanation. Restart the session after installation if a previously imported package changed, then rerun the checkout cell.
+1. Import the notebook, select a GPU accelerator, and enable Internet in settings.
+2. Run **Check the GPU**. Confirm the NVIDIA GPU is listed.
+3. Run **Install Unsloth**. The cell follows Unsloth's recommended Kaggle installation sequence and displays its logs. If prompted to restart, restart and continue at Settings.
+4. In **Settings and recipe**, keep `RECIPE = 'json-extractor'` and `MODEL_ALIAS = 'starter'` for the first run. This selects the Apache-2.0 Qwen3 1.7B text model.
+5. The optional authentication cell reads HF_TOKEN from Kaggle Secrets for later uploads. Leave it off for the first run.
+6. Run cells **Load the model** through **Download evidence and model**, in order.
 
-The default is the `starter` alias from [the registry](../../configs/models.yaml), QLoRA and the JSON extractor recipe. Start with `--max-steps 2` in the training cell for a smoke test. Remove it for the full run. For another recipe change the `--config` path. No token is needed to download the public base model.
+The notebook shows model loading, every LoRA setting, the non-thinking chat template, data validation, base answers, training, a test prompt, held-out evaluation, saving and GGUF export. Training uses 40 original examples; 10 validation examples guide the run and 10 held-out examples supply the final comparison.
 
-## Save and download
+## Send back real results
 
-Use the Files panel to download the GGUF. Save Version with outputs for persistent notebook artifacts. Optional Hub uploads read HF_TOKEN from Kaggle Secrets, never from a committed cell.
+Download **`run-evidence.zip`** from the final results cell. It contains:
 
-Do not end the session until you have verified your download or Hub upload. The adapter alone is not the merged portable model.
+- `comparison.md`: all held-out prompts and actual base and fine-tuned answers.
+- `comparison.json`: the full system/user messages, references and raw answers.
+- `run.json`: model, software versions, GPU, settings, data hashes, elapsed training time and export status.
+- `training-log.json`: training and validation losses.
 
-## Run on your laptop
+Send that ZIP to the maintainer to add real before/after examples. If a cell fails, send its full error output and the section title. Run the evidence cell after an export failure to collect the already-saved training results.
 
-Save the download as `outputs/finetuned-q4_k_m.gguf` in your local checkout. Install [Ollama](https://ollama.com/download), start it and create `outputs/Modelfile`:
+Download the GGUF from the Files panel. Use Save Version with outputs to retain the run.
+
+## Run the exported model locally
+
+Install [Ollama](https://ollama.com/download), start it and save the downloaded GGUF as `outputs/finetuned-q4_k_m.gguf` in your local checkout. Create `outputs/Modelfile`:
 
 ```dockerfile
 FROM ./finetuned-q4_k_m.gguf
@@ -31,10 +43,10 @@ ollama create recipe-local -f outputs/Modelfile
 ollama run recipe-local
 ```
 
-[Compare with the base](../../guides/04-evaluate.md), then [share the actual results](../../guides/07-share-your-model.md). [Other local runtimes](../../guides/06-run-locally.md) work too.
+Use the recipe's system instruction when testing the extraction task. See [local inference](../../guides/06-run-locally.md) and [evaluation](../../guides/04-evaluate.md) for API calls and a quantized base-versus-tuned comparison.
 
-## Common errors
+## Train on your own data
 
-No GPU: change runtime settings or wait for capacity; CPU fallback is not a practical training substitute. OOM: choose `tiny` and shorten sequence length. Disconnect: resume from a saved checkpoint with the same settings. GGUF build failure: retain merged weights and use [the manual converter](../../guides/05-quantize.md). Dependency installation failure: check the pinned Python/platform assumptions and [validation status](../../MAINTAINER_NOTES.md).
+The last notebook section accepts `train.jsonl`, `valid.jsonl` and `eval.jsonl` in [chat format](../../guides/02-make-a-dataset.md). Turn on `USE_OWN_DATA`, attach your dataset through the Input panel and choose it, and run validation. Restart the session, rerun Install and Settings, apply the printed data path and `RECIPE = 'my-task'`, then load a fresh base and train again.
 
-[Kaggle notebook documentation](https://www.kaggle.com/docs/notebooks) describe availability. No fixed free GPU quota is promised here.
+[Troubleshooting](../../guides/faq.md) · [Share your model](../../guides/07-share-your-model.md)

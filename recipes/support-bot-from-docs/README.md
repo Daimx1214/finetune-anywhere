@@ -1,32 +1,34 @@
-# Answer from a small product policy
+# Answer from a support policy
 
-Fine-tuning can teach a repeatable output format and task style. It does not guarantee correctness or add a reliable knowledge database.
+Fine-tune the `starter` Qwen3 1.7B text model to learn this task's output format and response style. Exact IDs and Apache-2.0 license information are in [the registry](../../configs/models.yaml).
 
-## Data and license
+## Dataset
 
-The included data is original synthetic teaching data, released under this repository's MIT license. Its rules and targets were checked during authoring. There are 100 training, 12 validation and 12 held-out evaluation examples. Validation chooses settings; evaluation stays untouched until the final comparison.
+Each scenario has its own policy and question. Topics include subscriptions, returns, permissions, storage, bookings and delivery. Cases cover exceptions, timing conditions, unsupported questions and quoted instructions.
 
-These examples deliberately use simple patterns. New entities are held out, but templates overlap. A good score here does not establish real-world generalization. Add diverse, licensed examples and a separate human-written test set before using the model for real work.
+All 60 scenarios are original, individually authored synthetic examples released under the repository's MIT license. They contain no scraped customer records or copied repository code. The splits contain **40 training, 10 validation and 10 evaluation examples**, authored separately rather than expanded by replacing identifiers. [Data manifest](data/manifest.json).
 
 ## Train
 
-Model: `starter` from [the registry](../../configs/models.yaml). Default path: [NVIDIA](../../paths/nvidia-gpu/), also usable on [Colab](../../paths/colab/) and [Mac](../../paths/apple-silicon/). Training time has not been measured; the script records elapsed seconds for your run.
+For a visible walkthrough, open [Colab](../../paths/colab/) or [Kaggle](../../paths/kaggle/) and set `RECIPE = 'support-bot-from-docs'` in Settings. The notebook records measured training time, hardware and actual before/after outputs in `run-evidence.zip`.
 
-From the repository root, after installing the hardware path:
+On [NVIDIA](../../paths/nvidia-gpu/), run from the repository root:
 
 ```bash
 python scripts/validate_dataset.py recipes/support-bot-from-docs/data/train.jsonl recipes/support-bot-from-docs/data/valid.jsonl recipes/support-bot-from-docs/data/eval.jsonl
 python paths/nvidia-gpu/train_unsloth.py --config recipes/support-bot-from-docs/config.yaml --export-gguf
 ```
 
-On Mac, pass this recipe to the shared wrapper:
+On [Apple Silicon](../../paths/apple-silicon/):
 
 ```bash
-bash paths/apple-silicon/train_mlx.sh support-bot-from-docs
+bash paths/apple-silicon/train_mlx.sh support-bot-from-docs starter 100
 ```
 
-## Evaluate and run
+The configuration uses rank 16, alpha 32, learning rate 0.0002 and three epochs on the GPU. The paths preserve Qwen3 non-thinking mode. Keep the dataset's system instruction during inference.
 
-Check every claim against the supplied policy. Include questions whose answers are absent.
+## Evaluate
 
-Follow [held-out evaluation](../../guides/04-evaluate.md), then [local inference](../../guides/06-run-locally.md). No before/after outputs are published without a real run. Record the base revision, adapter, seed, hardware, elapsed time and failed examples in your model card.
+Check every claim against the provided policy, preserve its exceptions and abstain when the answer is absent.
+
+Use [held-out evaluation](../../guides/04-evaluate.md), then [run locally](../../guides/06-run-locally.md). Report every evaluation example, including failures, and test the exported quantization too.

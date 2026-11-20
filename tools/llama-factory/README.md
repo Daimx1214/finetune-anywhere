@@ -8,7 +8,7 @@ python scripts/prepare_tool.py llama-factory
 llamafactory-cli train outputs/llama-factory/train.yaml
 ```
 
-The preparation script resolves the default model alias and registers the shared chat JSONL files as ShareGPT-style messages with explicit role/content mappings. The checked-in YAML is a template for that script, not a standalone config with a duplicated model ID.
+The Qwen3 template uses `enable_thinking: false` for direct answers. The preparation script resolves the default model alias and registers the shared chat JSONL files as ShareGPT-style messages with explicit role/content mappings. The checked-in YAML is a template for that script, not a standalone config with a duplicated model ID.
 
 For the UI, run `llamafactory-cli webui`, choose the registry model and match the config's settings. Keep the UI private to your machine.
 
@@ -18,4 +18,4 @@ Export the resulting adapter using the shared merger:
 python scripts/merge_adapter.py outputs/llama-factory/adapter --output outputs/llama-factory/merged
 ```
 
-This CPU float32 merge needs RAM for the base and temporary tensors. Follow [GGUF export](../../guides/05-quantize.md) using that merged directory, [local inference](../../guides/06-run-locally.md), and [evaluation](../../guides/04-evaluate.md). The installed tool version is pinned; GPU execution is listed separately in maintainer validation notes.
+This CPU float32 merge needs RAM for the base and temporary tensors. Follow [GGUF export](../../guides/05-quantize.md) using that merged directory, [local inference](../../guides/06-run-locally.md), and [evaluation](../../guides/04-evaluate.md).

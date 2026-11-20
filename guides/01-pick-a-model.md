@@ -1,23 +1,31 @@
 # Pick a model
 
-Use **starter** for your first task. Use **tiny** for an installation smoke test or a low-memory machine. The exact model IDs live only in [configs/models.yaml](../configs/models.yaml). Resolve them instead of copying names between scripts:
+Start with **starter**, the 1.7B Qwen3 text model. Use **tiny** for your first short run or an 8 GB laptop, and **larger** when you want more capacity. All three use the Apache 2.0 license.
+
+Exact Hugging Face IDs, corresponding Unsloth catalog IDs, reviewed revisions and model-card parameter counts live in [configs/models.yaml](../configs/models.yaml). Resolve an alias from the repository root:
 
 ```bash
 python scripts/model_id.py starter
 ```
 
-| Alias | Total parameters | FP16 GB | 8-bit GB | 4-bit GB | Good for |
-| --- | ---: | ---: | ---: | ---: | --- |
-| tiny | 0.49B | 0.98 | 0.49 | 0.27 | Setup checks, small structured tasks |
-| starter | 1.54B | 3.08 | 1.54 | 0.85 | A first useful adapter |
-| larger | 3.09B | 6.18 | 3.09 | 1.70 | More capacity when memory and license fit |
+| Alias | Model family | Parameters | FP16 GB | 8-bit GB | 4-bit GB | Good for |
+| --- | --- | ---: | ---: | ---: | ---: | --- |
+| tiny | Qwen3 | 0.6B | 1.20 | 0.60 | 0.33 | First run and low-memory inference |
+| starter | Qwen3 | 1.7B | 3.40 | 1.70 | 0.94 | Structured tasks and small adapters |
+| larger | Qwen3 | 4.0B | 8.00 | 4.00 | 2.20 | More capacity for language and code |
 
-These are weights only: billions of parameters × 2, 1 or 0.55 bytes. Context, runtime and training activations need extra space. See [the calculator](../scripts/memory_calc.py).
+These weight estimates use the rounded model-card counts × 2, 1 or 0.55 bytes per parameter, in decimal GB. Add KV cache and runtime memory using [the calculator](../scripts/memory_calc.py).
 
-The registry uses established instruction-tuned Qwen2.5 models to keep the starter simple. Smaller aliases use Apache-2.0; **larger uses the Qwen Research License**. Read the linked model card by opening the ID under the Hugging Face model site before distributing a derivative. The repository's MIT license does not replace model terms.
+## Direct answers with Qwen3
 
-## Beyond Qwen
+Qwen3 supports thinking and non-thinking modes. These recipes train direct answers using `enable_thinking=False`. The training paths persist that setting in the tokenizer's chat template so the exported model uses the same response prefix. Keep the recipe's system message during inference.
 
-The dataset and evaluation approach also work with other open models. Add a verified model to the registry, confirm its license and architecture support in your trainer and exporter, and use its own tokenizer and chat template. Do not reuse Qwen's template for a different family. A text-only workflow does not automatically support vision or audio models.
+## Why the text-only defaults?
+
+The registry also records the catalog review of Qwen3.5's small 0.8B, 2B and 4B models. They are Apache 2.0 image-text models. Qwen3 gives these starter recipes a shared text-model architecture across Unsloth, MLX-LM and llama.cpp. The [model review notes](../MAINTAINER_NOTES.md#model-review) record the Qwen3.5 decision.
+
+## Other models
+
+Add an Apache-2.0 text model to the registry after checking its original model card and support in your trainer and exporter. Use that model's own tokenizer and chat template. The Qwen3 non-thinking helper is specific to the supported Qwen3 aliases; adapt it when adding another family.
 
 Next: [Make a dataset](02-make-a-dataset.md).

@@ -2,6 +2,8 @@
 
 Start with 100 to 500 high-quality examples of one task. Hold out 10 to 20 examples for final evaluation. Use a separate validation split for changing training settings. Split by source document, customer, repository or time when related examples could leak across splits.
 
+The bundled recipes each contain 40 training, 10 validation and 10 evaluation examples, individually authored across different situations. Use them for your first run and expand the training split for your own task.
+
 ## Chat JSONL
 
 Each line is one JSON object. Use an optional system message, then alternating user and assistant messages. Finish with an assistant answer.

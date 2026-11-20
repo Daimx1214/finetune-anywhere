@@ -14,7 +14,7 @@ flowchart TD
     F -->|Learn the Python pieces| K[TRL plus PEFT]
 ```
 
-These are workflow comparisons, not speed benchmarks. Performance depends on kernels, hardware, sequence length and model.
+Compare the workflow, hardware and export format you need.
 
 | Tool | Ease / interface | Speed approach | Memory | Multi-GPU | Mac | Export |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -27,6 +27,6 @@ These are workflow comparisons, not speed benchmarks. Performance depends on ker
 
 Use **Ollama** for a convenient local API, **LM Studio** for a desktop GUI, **llama.cpp** for direct control over GGUF, **MLX-LM** for native Mac inference, **Transformers** for Python experiments, and **vLLM** for GPU serving. Training and serving do not need the same tool.
 
-AMD support is stack-, GPU- and ROCm-version-specific. This repository does not claim a validated AMD training path. Consult current [PyTorch installation guidance](https://pytorch.org/get-started/locally/) and your trainer's supported hardware before renting or buying hardware.
+For AMD setup, consult current [PyTorch installation guidance](https://pytorch.org/get-started/locally/) and your trainer's supported hardware before renting or buying hardware.
 
 Next: [Train](03-train.md).

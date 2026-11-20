@@ -1,32 +1,34 @@
-# Generate read-only SQL for a fixed schema
+# Write read-only SQLite queries
 
-Fine-tuning can teach a repeatable output format and task style. It does not guarantee correctness or add a reliable knowledge database.
+Fine-tune the `starter` Qwen3 1.7B text model to learn this task's output format and response style. Exact IDs and Apache-2.0 license information are in [the registry](../../configs/models.yaml).
 
-## Data and license
+## Dataset
 
-The included data is original synthetic teaching data, released under this repository's MIT license. Its rules and targets were checked during authoring. There are 100 training, 12 validation and 12 held-out evaluation examples. Validation chooses settings; evaluation stays untouched until the final comparison.
+Questions cover filtering, nulls, joins, empty groups, aggregates, HAVING, distinct counts, sorting, tie-breaks and date boundaries. Each example supplies its own schema.
 
-These examples deliberately use simple patterns. New entities are held out, but templates overlap. A good score here does not establish real-world generalization. Add diverse, licensed examples and a separate human-written test set before using the model for real work.
+All 60 scenarios are original, individually authored synthetic examples released under the repository's MIT license. They contain no scraped customer records or copied repository code. The splits contain **40 training, 10 validation and 10 evaluation examples**, authored separately rather than expanded by replacing identifiers. [Data manifest](data/manifest.json).
 
 ## Train
 
-Model: `starter` from [the registry](../../configs/models.yaml). Default path: [NVIDIA](../../paths/nvidia-gpu/), also usable on [Colab](../../paths/colab/) and [Mac](../../paths/apple-silicon/). Training time has not been measured; the script records elapsed seconds for your run.
+For a visible walkthrough, open [Colab](../../paths/colab/) or [Kaggle](../../paths/kaggle/) and set `RECIPE = 'sql-generator'` in Settings. The notebook records measured training time, hardware and actual before/after outputs in `run-evidence.zip`.
 
-From the repository root, after installing the hardware path:
+On [NVIDIA](../../paths/nvidia-gpu/), run from the repository root:
 
 ```bash
 python scripts/validate_dataset.py recipes/sql-generator/data/train.jsonl recipes/sql-generator/data/valid.jsonl recipes/sql-generator/data/eval.jsonl
 python paths/nvidia-gpu/train_unsloth.py --config recipes/sql-generator/config.yaml --export-gguf
 ```
 
-On Mac, pass this recipe to the shared wrapper:
+On [Apple Silicon](../../paths/apple-silicon/):
 
 ```bash
-bash paths/apple-silicon/train_mlx.sh sql-generator
+bash paths/apple-silicon/train_mlx.sh sql-generator starter 100
 ```
 
-## Evaluate and run
+The configuration uses rank 16, alpha 32, learning rate 0.0002 and three epochs on the GPU. The paths preserve Qwen3 non-thinking mode. Keep the dataset's system instruction during inference.
 
-Execute queries against a disposable SQLite database and compare results. Never execute model SQL on production data.
+## Evaluate
 
-Follow [held-out evaluation](../../guides/04-evaluate.md), then [local inference](../../guides/06-run-locally.md). No before/after outputs are published without a real run. Record the base revision, adapter, seed, hardware, elapsed time and failed examples in your model card.
+Execute SELECT queries on a disposable SQLite database. Compare result rows and ordering, including empty data, null values and ties.
+
+Use [held-out evaluation](../../guides/04-evaluate.md), then [run locally](../../guides/06-run-locally.md). Report every evaluation example, including failures, and test the exported quantization too.

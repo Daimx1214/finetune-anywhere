@@ -9,6 +9,6 @@ Start with one narrow task. Every recipe includes original MIT-licensed chat dat
 | [SQL generator](sql-generator/) | Result correctness on a disposable database |
 | [Support bot from docs](support-bot-from-docs/) | Grounded answers and abstention |
 
-These are teaching datasets, not benchmarks. They are intentionally small and repetitive. Expand coverage and test on independently written examples. Fine-tuning changes behavior; retrieval is usually the better way to supply changing facts.
+Each dataset contains 60 separately authored scenarios: 40 training, 10 validation and 10 held-out evaluation examples. They include edge cases and distinct tasks within each recipe, rather than repeated templates with substituted identifiers. All sample data is original and MIT-licensed.
 
 Strong community recipes can be promoted here with their builders' credit and permission. Include real measurements, data provenance and an honest failure analysis.

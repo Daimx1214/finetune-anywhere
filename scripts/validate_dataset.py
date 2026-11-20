@@ -49,7 +49,11 @@ def validate(path, tokenizer=None, max_tokens=2048):
             errors.append(f"{prefix} repeated prompt (possible conflicting target)")
         prompts.add(prompt)
         n = (
-            len(tokenizer.apply_chat_template(messages, tokenize=True, return_dict=False))
+            len(
+                tokenizer.apply_chat_template(
+                    messages, tokenize=True, return_dict=False, enable_thinking=False
+                )
+            )
             if tokenizer
             else math.ceil(len(signature) / 4)
         )

@@ -4,6 +4,7 @@ import argparse
 from pathlib import Path
 
 from common import model_id
+from configure_chat import configure_tokenizer
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser(description=__doc__)
@@ -20,5 +21,5 @@ if __name__ == "__main__":
     )
     model = PeftModel.from_pretrained(base, str(a.adapter)).merge_and_unload()
     model.save_pretrained(a.output, safe_serialization=True)
-    AutoTokenizer.from_pretrained(model_id(a.model)).save_pretrained(a.output)
+    configure_tokenizer(AutoTokenizer.from_pretrained(model_id(a.model))).save_pretrained(a.output)
     print(f"Merged to {a.output}. CPU float32 merge needs substantial system RAM.")

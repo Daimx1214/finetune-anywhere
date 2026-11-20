@@ -11,6 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts"))
 from common import model_id  # noqa: E402
+from configure_chat import configure_tokenizer  # noqa: E402
 from validate_dataset import validate  # noqa: E402
 
 
@@ -33,9 +34,9 @@ def main():
             p.error("\n".join(errors))
     output = a.output or ROOT / "outputs" / cfg["recipe"]
     # Import Unsloth before TRL and Transformers so its optimizations are applied.
+    from unsloth import FastLanguageModel, is_bfloat16_supported  # Must precede TRL.
     from datasets import load_dataset
     from trl import SFTConfig, SFTTrainer
-    from unsloth import FastLanguageModel, is_bfloat16_supported
 
     started = time.monotonic()
     model, tokenizer = FastLanguageModel.from_pretrained(
@@ -44,6 +45,7 @@ def main():
         dtype=None,
         load_in_4bit=True,
     )
+    configure_tokenizer(tokenizer)
     model = FastLanguageModel.get_peft_model(
         model,
         r=cfg["rank"],
@@ -59,7 +61,9 @@ def main():
     def format_rows(batch):
         return {
             "text": [
-                tokenizer.apply_chat_template(m, tokenize=False, add_generation_prompt=False)
+                tokenizer.apply_chat_template(
+                    m, tokenize=False, add_generation_prompt=False, enable_thinking=False
+                )
                 for m in batch["messages"]
             ]
         }

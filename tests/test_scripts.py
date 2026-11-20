@@ -36,7 +36,9 @@ def test_memory_formula():
 @pytest.mark.parametrize("recipe", sorted((ROOT / "recipes").glob("*/data")))
 def test_recipe_splits(recipe):
     seen = set()
-    for split, count in [("train", 100), ("valid", 12), ("eval", 12)]:
+    manifest = json.loads((recipe / "manifest.json").read_text())
+    assert manifest["license"] == "MIT"
+    for split, count in manifest["splits"].items():
         errors, lengths, prompts = validate(recipe / f"{split}.jsonl")
         assert not errors
         assert len(lengths) == count
@@ -291,9 +293,10 @@ def test_compare_actual_http_and_no_reference_leakage(tmp_path):
 
 def test_tokenizer_requests_ids_not_mapping(tmp_path):
     class Tokenizer:
-        def apply_chat_template(self, messages, *, tokenize, return_dict):
+        def apply_chat_template(self, messages, *, tokenize, return_dict, enable_thinking):
             assert tokenize is True
             assert return_dict is False
+            assert enable_thinking is False
             return list(range(73))
 
     path = tmp_path / "tokens.jsonl"

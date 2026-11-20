@@ -43,7 +43,13 @@ def main():
 
         (output / "dataset_info.json").write_text(json.dumps(info, indent=2) + "\n")
     else:
+        from transformers import AutoTokenizer
+        from configure_chat import configure_tokenizer
+
         cfg["base_model"] = model_id(a.model)
+        tokenizer = configure_tokenizer(AutoTokenizer.from_pretrained(model_id(a.model)))
+        cfg["chat_template_jinja"] = tokenizer.chat_template
+        cfg.pop("chat_template", None)
         cfg["datasets"] = [
             {"path": str(data / "train.jsonl"), "type": "chat_template", "field_messages": "messages"}
         ]

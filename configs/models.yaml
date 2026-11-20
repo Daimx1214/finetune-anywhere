@@ -1,19 +1,47 @@
-# Verified against official model cards on 2026-11-20.
-# Sizes are total parameters in billions, not the rounded marketing size.
+# Verified from official Hugging Face model cards and Unsloth's catalog, 2026-11-21.
+# params_b uses the rounded total parameter count in the official model card.
+verified_at: '2026-11-21'
 default: starter
 models:
   tiny:
-    id: Qwen/Qwen2.5-0.5B-Instruct
-    params_b: 0.49
+    id: Qwen/Qwen3-0.6B
+    unsloth_id: unsloth/Qwen3-0.6B
+    revision: c1899de289a04d12100db370d81485cdf75e47ca
+    params_b: 0.6
     license: Apache-2.0
-    good_for: First smoke test and low-memory inference
+    modality: text
+    enable_thinking: false
+    good_for: First run and low-memory inference
   starter:
-    id: Qwen/Qwen2.5-1.5B-Instruct
-    params_b: 1.54
+    id: Qwen/Qwen3-1.7B
+    unsloth_id: unsloth/Qwen3-1.7B
+    revision: 70d244cc86ccca08cf5af4e1e306ecf908b1ad5e
+    params_b: 1.7
     license: Apache-2.0
-    good_for: Small structured tasks and first useful adapter
+    modality: text
+    enable_thinking: false
+    good_for: Structured extraction and small task adapters
   larger:
-    id: Qwen/Qwen2.5-3B-Instruct
-    params_b: 3.09
-    license: Qwen Research License (read the model card)
-    good_for: More capacity when memory and license fit
+    id: Qwen/Qwen3-4B
+    unsloth_id: unsloth/Qwen3-4B
+    revision: 1cfa9a7208912126459214e8b04321603b3df60c
+    params_b: 4.0
+    license: Apache-2.0
+    modality: text
+    enable_thinking: false
+    good_for: More capacity for language and code tasks
+# Catalog review only. These are not selectable training aliases.
+# Keep the shared workflow on text-only models; see MAINTAINER_NOTES.md.
+reviewed_multimodal:
+  - id: Qwen/Qwen3.5-0.8B
+    unsloth_id: unsloth/Qwen3.5-0.8B
+    license: Apache-2.0
+    modality: image-text-to-text
+  - id: Qwen/Qwen3.5-2B
+    unsloth_id: unsloth/Qwen3.5-2B
+    license: Apache-2.0
+    modality: image-text-to-text
+  - id: Qwen/Qwen3.5-4B
+    unsloth_id: unsloth/Qwen3.5-4B
+    license: Apache-2.0
+    modality: image-text-to-text
