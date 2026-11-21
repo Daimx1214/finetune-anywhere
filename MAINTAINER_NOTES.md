@@ -2,13 +2,13 @@
 
 ## Validation status
 
-Updated 21 November 2026. The maintainer will run the Colab notebook on a free T4 and return its evidence ZIP. Browser automation and GPU execution were stopped at the maintainer's request. No training outputs or performance figures have been fabricated.
+Updated 21 November 2026. The maintainer reports that Colab sections 1 through 13 worked and supplied logs showing successful merging and Q4_K_M conversion in section 14. The notebook then searched the wrong directory; discovery and downloads now search the run directory, including the sibling gguf_gguf directory. The evidence ZIP and GPU metadata are still pending. Browser automation and GPU execution were stopped at the maintainer's request. No training outputs or performance figures have been fabricated.
 
 | Area | Evidence | Remaining check |
 | --- | --- | --- |
 | Models | Official Hugging Face cards/API and Unsloth catalog checked for all six reviewed small models | Review model revisions when updating the registry |
 | Recipe data | 60 independently authored scenarios per recipe; 40 train, 10 validation, 10 evaluation; original MIT data | Domain review and broader real-world evaluation |
-| Cloud notebooks | Explicit loading, LoRA, template, data, training, inference, saving and export cells; install sequence checked against current official Unsloth notebooks | Maintainer runs the full T4 workflow and supplies run-evidence.zip |
+| Cloud notebooks | Explicit loading, LoRA, template, data, training, inference, saving and export cells; install sequence checked against current official Unsloth notebooks | Maintainer confirms artifact discovery/download after the path fix and supplies run-evidence.zip |
 | Training environments | Existing Linux pins retained; Mac CLI environment installed during initial build | Hardware training, adapter fusion and quantized inference for the new Qwen3 defaults |
 | Alternative tools | Qwen3 reasoning-template settings and merge/export handling updated | End-to-end runs on supported GPUs |
 | Public results | None yet | Publish only outputs from the returned run, with failures and exact settings |
