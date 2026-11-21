@@ -27,7 +27,12 @@ def check(root):
         text = path.read_text(encoding="utf-8")
         if "\u2014" in text:
             errors.append(f"{rel}: contains an em dash")
-        if str(rel) != "configs/models.yaml" and not str(rel).startswith("showcase/"):
+        # Preserve the actual model identity in the original measured run manifest.
+        model_id_exceptions = {
+            "configs/models.yaml",
+            "recipes/json-extractor/results/2026-11-21-t4/run.json",
+        }
+        if str(rel) not in model_id_exceptions and not str(rel).startswith("showcase/"):
             for model in models:
                 if model in text:
                     errors.append(f"{rel}: duplicated registry model ID")

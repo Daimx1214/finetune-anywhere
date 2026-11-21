@@ -43,7 +43,7 @@ The code and authored sample data here are MIT. Base model and upstream dataset 
 
 ## Which claims have been tested?
 
-[Maintainer notes](../MAINTAINER_NOTES.md) distinguish local checks from completed GPU training. The cloud notebooks follow the verified Unsloth install procedure, but a complete T4 training/export run has not yet been supplied for this revision. Send the notebook's `run-evidence.zip` to record actual results. Do not infer a quality improvement from successful installation or a falling loss alone.
+[Maintainer notes](../MAINTAINER_NOTES.md) distinguish local checks from completed GPU training. The maintainer supplied a [Colab T4 run](../recipes/json-extractor/results/2026-11-21-t4/) with real before/after outputs and successful conversion logs. Its ten synthetic evaluation cases are a teaching result, not a production benchmark. Quantized inference remains untested; the ZIP predates export recovery. Do not infer a quality improvement from successful installation or a falling loss alone.
 
 ## Are the path times and memory sizes guaranteed?
 

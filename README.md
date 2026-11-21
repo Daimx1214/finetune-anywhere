@@ -8,6 +8,12 @@ Fine-tune a small open model and run it on your own machine. Colab, Kaggle, NVID
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/junaiddshaukat/finetune-anywhere/blob/main/paths/colab/finetune_unsloth_colab.ipynb)
 [![Open in Kaggle](https://img.shields.io/badge/Open_in-Kaggle-20BEFF)](https://www.kaggle.com/kernels/welcome?src=https://raw.githubusercontent.com/junaiddshaukat/finetune-anywhere/main/paths/kaggle/finetune_unsloth_kaggle.ipynb)
 
+## Hackathon participants: start here
+
+Start with [Colab and the JSON extractor](paths/colab/): choose a T4 GPU, keep the default recipe, and run the cells in order. Download your evidence ZIP and GGUF, then follow the local inference instructions. After the first run, use the final notebook section to train on your own data.
+
+Read the [event rules and submission steps](showcase/qwen-local-hackathon-2026/) and the [completed work and testing report](PROJECT_REPORT.md).
+
 ## Pick your path
 
 | Your hardware | Start here | Tool | Plan for |
@@ -73,6 +79,8 @@ See the [decision tree and comparison](guides/choose-your-tool.md).
 | [Support bot from docs](recipes/support-bot-from-docs/) | Answer from a policy and abstain when it is silent |
 
 Each includes 60 original MIT-licensed examples: 40 for training, 10 for validation and 10 for held-out evaluation.
+
+[Measured Colab T4 run](recipes/json-extractor/results/2026-11-21-t4/): the JSON extractor improved from **2/10 to 7/10 exact matches** on its held-out examples after **80 seconds of training**. The report includes every before/after answer and remaining error.
 
 ## Community showcase
 

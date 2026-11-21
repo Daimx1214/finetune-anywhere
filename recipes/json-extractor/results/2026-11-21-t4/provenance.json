@@ -1,0 +1,11 @@
+{
+  "source": "Maintainer-supplied Colab run-evidence.zip",
+  "archive_sha256": "faf6ea951009a35e8e765354519ab90cf998ff23c70d6562113abcf5a2c9629a",
+  "files_sha256": {
+    "comparison.json": "3e7611ec48081d2a767fc3b9bdb72afb6bde159c8f1f9956440dde9816db26cf",
+    "comparison.md": "8a8f6a39ed110d357e78a5d20d6cf9f654bc84ca6f69929d694a81a584db2b9b",
+    "run.json": "90647f8413fe37e6aac600887a7d65dda4f85a20a86e82f933c31e2e2e608139",
+    "training-log.json": "62abe5e72a49278f05ce94ab80a04e8eb227d67de2a9af1582ffede4f6df2c89"
+  },
+  "preservation": "The four evidence files are unchanged. run.json predates export recovery and retains export_completed=false. Subsequent supplied conversion logs and screenshot show successful Q4_K_M export and file discovery; exported weights were not included or tested."
+}

@@ -1,0 +1,58 @@
+{
+  "recipe": "json-extractor",
+  "model_alias": "starter",
+  "model_id": "Qwen/Qwen3-1.7B",
+  "loaded_base_revision": "a972f4304f86a0a705d35b378d7a7675d58063a7",
+  "catalog_revision": "70d244cc86ccca08cf5af4e1e306ecf908b1ad5e",
+  "repository_commit": "c1074b66c661a61a9a69435870fb9e664aa0f38c",
+  "gpu": "Tesla T4",
+  "gpu_bytes": 15637086208,
+  "python": "3.13.16",
+  "package_versions": {
+    "unsloth": "2026.11.9",
+    "unsloth_zoo": "2026.11.8",
+    "torch": "2.14.1+cu130",
+    "transformers": "4.57.6",
+    "trl": "0.22.2",
+    "peft": "0.21.2",
+    "datasets": "4.3.0"
+  },
+  "settings": {
+    "model": "starter",
+    "recipe": "json-extractor",
+    "rank": 16,
+    "alpha": 32,
+    "learning_rate": 0.0002,
+    "epochs": 3,
+    "max_seq_length": 1024,
+    "batch_size": 1,
+    "gradient_accumulation_steps": 4,
+    "seed": 42
+  },
+  "enable_thinking": false,
+  "generation": {
+    "max_new_tokens": 256,
+    "do_sample": false
+  },
+  "training_seconds": 80.14228185499996,
+  "train_metrics": {
+    "train_runtime": 78.5277,
+    "train_samples_per_second": 1.528,
+    "train_steps_per_second": 0.382,
+    "total_flos": 148731221440512.0,
+    "train_loss": 1.589069813489914,
+    "epoch": 3.0
+  },
+  "peak_allocated_gpu_bytes": 4511591936,
+  "data_sha256": {
+    "train": "1cbab1ab2e3da244b143915c6a3b2a55a72ee0ae308dbd19da962dec307f2af9",
+    "valid": "ee38b546262c696cc1197c134c198a34dc2e836d0d8eb7a42b5248cf587c9ee0",
+    "eval": "5c30196aaa0e06c76566130c05abfaa34261039e69d5ee3f6f5c26961ccc6fd6"
+  },
+  "split_sizes": {
+    "train": 40,
+    "valid": 10,
+    "eval": 10
+  },
+  "export_completed": false
+}

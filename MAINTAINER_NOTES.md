@@ -2,18 +2,26 @@
 
 ## Validation status
 
-Updated 21 November 2026. The maintainer reports that Colab sections 1 through 13 worked and supplied logs showing successful merging and Q4_K_M conversion in section 14. The notebook then searched the wrong directory; discovery and downloads now search the run directory, including the sibling gguf_gguf directory. The evidence ZIP and GPU metadata are still pending. Browser automation and GPU execution were stopped at the maintainer's request. No training outputs or performance figures have been fabricated.
+Updated 21 November 2026. The maintainer supplied the Colab evidence ZIP, successful Q4_K_M conversion logs and a screenshot confirming artifact discovery and download initiation. The original notebook searched the wrong directory after conversion; commit 50b8b09 fixes discovery in both notebooks. The returned evidence is preserved unchanged and independently scored. See the recorded T4 run below.
 
 | Area | Evidence | Remaining check |
 | --- | --- | --- |
 | Models | Official Hugging Face cards/API and Unsloth catalog checked for all six reviewed small models | Review model revisions when updating the registry |
 | Recipe data | 60 independently authored scenarios per recipe; 40 train, 10 validation, 10 evaluation; original MIT data | Domain review and broader real-world evaluation |
-| Cloud notebooks | Explicit loading, LoRA, template, data, training, inference, saving and export cells; install sequence checked against current official Unsloth notebooks | Maintainer confirms artifact discovery/download after the path fix and supplies run-evidence.zip |
+| Cloud notebooks | Explicit loading, LoRA, template, data, training, inference, saving and export cells; install sequence checked against current official Unsloth notebooks | Fresh run of the corrected notebook; Kaggle execution |
 | Training environments | Existing Linux pins retained; Mac CLI environment installed during initial build | Hardware training, adapter fusion and quantized inference for the new Qwen3 defaults |
 | Alternative tools | Qwen3 reasoning-template settings and merge/export handling updated | End-to-end runs on supported GPUs |
-| Public results | None yet | Publish only outputs from the returned run, with failures and exact settings |
+| Public results | [JSON extractor T4 run](recipes/json-extractor/results/2026-11-21-t4/), all ten before/after outputs | Quantized inference and broader evaluation |
 
-The initial repository's CI passed with 25 tests. The refresh passes 34 local tests plus notebook structure/output checks. All 240 examples also pass exact token-length and train/inference template equivalence checks with each of the three actual Qwen3 tokenizers (720 example checks). Dependency resolution, API inspection and tests do not substitute for a complete GPU run. The earlier Mac attempt stopped before training because the filesystem had less than 1 GB free; it provides no model-quality evidence.
+The initial repository's CI passed with 25 tests. The export fix passes 41 local tests plus notebook structure/output checks. All 240 examples also pass exact token-length and train/inference template equivalence checks with each of the three actual Qwen3 tokenizers (720 example checks). Dependency resolution, API inspection and tests do not substitute for a complete GPU run. The earlier Mac attempt stopped before training because the filesystem had less than 1 GB free; it provides no model-quality evidence.
+
+## Recorded T4 run
+
+[The original evidence and all outputs](recipes/json-extractor/results/2026-11-21-t4/) show exact matches increasing from 2/10 to 7/10. All split hashes and evaluation prompts/references match repository data. Training took 80.14 seconds; peak PyTorch allocated memory was 4.51 GB (4.20 GiB), not total device usage. Installation, downloads, inference and export are excluded from that duration. The ten synthetic cases are a small teaching evaluation, not evidence of general reliability. Three tuned answers still fail exact match; item boundaries in these references merit domain review. References have not been changed after seeing outputs.
+
+The comparisons evaluate the four-bit base with the adapter disabled versus enabled, before GGUF export. The loaded revision differs from the reviewed catalog revision; both are preserved in the original manifest. This records what actually ran rather than asserting revision identity or deterministic reproduction from today's unpinned install.
+
+The ZIP contains `export_completed: false` because its report predates recovery. It has not been rewritten. Subsequent supplied logs report successful Q4_K_M conversion, and the screenshot shows recovery finding the nonempty file in `gguf_gguf` and initiating download. These establish conversion and discovery, not a completed local download or successful GGUF inference. Export time and GGUF checksum are unavailable. To refresh the ZIP in the same session, rerun section 15 after the recovery cell; no retraining is needed.
 
 ## Model review
 
@@ -29,7 +37,7 @@ The saved Qwen3 tokenizer prepends a Jinja assignment fixing `enable_thinking` t
 
 The Colab notebook follows the current official Qwen3 reasoning/conversation notebook: install the Colab helper packages, install Unsloth's stack without replacing the whole host dependency tree, install kernels, then select Transformers 4.57.6 and TRL 0.22.2. Kaggle follows Unsloth's platform notebook with its CUDA wheel setup. Both keep install logs visible and add PyYAML for the registry. Neither installs the 100-line Linux requirements file.
 
-This is a checked installation procedure, not a claimed successful T4 execution. Upstream unpinned packages can change. The evidence report captures actual versions, loaded revision, dataset hashes, settings, timings, peak allocated GPU memory and export outcome. A fresh session is needed after replacing already-imported libraries.
+The returned Colab T4 run records a successful training execution with the actual package versions. Kaggle execution remains unverified. Upstream unpinned packages can change. The evidence report captures actual versions, loaded revision, dataset hashes, settings, timings, peak allocated GPU memory and export outcome. A fresh session is needed after replacing already-imported libraries.
 
 The notebooks record base answers with the adapter disabled, then train and evaluate the same held-out prompts. Targets never enter the inference prompt. Before/after results are for the shared four-bit base plus adapter, before GGUF export. Exported GGUF quality is a separate evaluation. The small report ZIP excludes weights and credentials.
 
@@ -53,8 +61,8 @@ The new datasets deliberately trade repetitive volume for broader coverage. Each
 - CPU float32 merging is portable but may need substantial RAM. It is a separate operation from low-memory training.
 - Memory numbers are decimal GB. The calculator exposes KV architecture assumptions. Its training budget is a labelled heuristic, not a measured architecture-specific activation calculation.
 - compare.py uses local OpenAI-compatible servers so it works across hardware without installing two model stacks. It saves actual text and raw JSON. Unit tests use a clearly isolated mock HTTP server, not a published model example.
-- No claimed quality outputs or hero GIF are included without a real run.
-- Model IDs are centralized for first-party workflows. User showcase entries and externally uploaded model cards must identify their actual base model and are the necessary exception to the registry-only rule.
+- Published JSON extractor outputs come from the supplied T4 evidence. A hero GIF still requires a real local inference recording.
+- Model IDs are centralized for first-party workflows. User showcase entries, externally uploaded model cards and the preserved original T4 run manifest must identify their actual base model and are exceptions to the registry-only rule.
 - The required submission template is intentionally a blank form. It is skipped by gallery discovery and fails validation until completed. There are no fictional gallery entries.
 - Future event names are accepted only with an existing event README and a matching folder. Enum restrictions apply to the training tool, platform, method and runtime fields.
 - The deadline's closing minute is inclusive. Late means PR creation at or after 2026-11-28T19:00:00Z. Edits do not change the creation timestamp.
@@ -88,16 +96,16 @@ Model cards and API metadata were fetched directly from the Hugging Face reposit
 
 - AMD training folder: omitted because no end-to-end ROCm training setup was validated on available hardware. This does not mean AMD cannot train models.
 - Full Modal deployment: the architecture is described with the official GPU guide, but an untested provider-specific app is not presented as working code.
-- A complete T4 run is intentionally left to the maintainer. Badge links and source checks do not establish successful execution.
+- The maintainer ran Colab training and export; exported GGUF inference and a fresh run of the corrected notebook remain unverified.
 - AWQ/GPTQ commands are omitted because hardware, model and serving-version compatibility must be checked for a specific deployment.
-- Guaranteed times, measured speeds, free GPU quotas, costs and claims of universal compatibility are omitted.
+- Guaranteed times, free GPU quotas, costs and claims of universal compatibility are omitted. Measured training duration is reported only for the supplied run.
 
 ## Real-run backlog
 
 Run each recipe on at least one complete training-to-local-inference path and add only actual outputs:
 
 - Run commit-message-writer and add real before/after outputs, elapsed time and failures.
-- Run json-extractor and add real outputs, field-level accuracy and parseability counts.
+- Completed: JSON extractor training outputs, field-level accuracy and parseability counts. Next: evaluate its exported GGUF.
 - Run sql-generator and add real outputs with SQLite result-equivalence checks.
 - Run support-bot-from-docs and add grounded-answer and abstention results.
 - Repeat evaluation after GGUF or MLX quantization. Include hardware, software versions, revision and context length.

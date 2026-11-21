@@ -32,3 +32,7 @@ The configuration uses rank 16, alpha 32, learning rate 0.0002 and three epochs 
 Parse the output and compare the exact keys, types and values. An absent quantity must stay null, and a delivery date alone does not imply urgency.
 
 Use [held-out evaluation](../../guides/04-evaluate.md), then [run locally](../../guides/06-run-locally.md). Report every evaluation example, including failures, and test the exported quantization too.
+
+## Recorded Colab result
+
+On the maintainer's Tesla T4 run, exact matches on the ten held-out examples rose from **2/10 to 7/10**, and directly parseable JSON rose from **8/10 to 10/10**. Training took **80.14 seconds** with **4.51 GB peak allocated GPU memory**. [Read the measured run, actual before/after answers and all three remaining errors](results/2026-11-21-t4/).
