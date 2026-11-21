@@ -2,6 +2,22 @@
 
 Fine-tune a small open model and run it on your own machine. Colab, Kaggle, NVIDIA, Mac, CPU, or cloud GPU.
 
+**2/10 → 7/10 exact matches in 80 seconds of training on a Colab T4.** The JSON extractor learned from 40 examples and was evaluated on 10 held-out requests.
+
+> Please supply a dozen insulated lunch bags for the field team. Delivery next week is fine.
+
+**Before**
+```json
+{"item": "lunch bags", "quantity": null, "priority": "normal"}
+```
+
+**After**
+```json
+{"item": "insulated lunch bags", "quantity": 12, "priority": "normal"}
+```
+
+[See all ten real before/after answers, settings and remaining errors](recipes/json-extractor/results/2026-11-21-t4/).
+
 [![MIT license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/junaiddshaukat/finetune-anywhere)](https://github.com/junaiddshaukat/finetune-anywhere/stargazers)
 [![Contributors](https://img.shields.io/github/contributors/junaiddshaukat/finetune-anywhere)](https://github.com/junaiddshaukat/finetune-anywhere/graphs/contributors)
@@ -12,7 +28,7 @@ Fine-tune a small open model and run it on your own machine. Colab, Kaggle, NVID
 
 Start with [Colab and the JSON extractor](paths/colab/): choose a T4 GPU, keep the default recipe, and run the cells in order. Download your evidence ZIP and GGUF, then follow the local inference instructions. After the first run, use the final notebook section to train on your own data.
 
-Read the [event rules and submission steps](showcase/qwen-local-hackathon-2026/) and the [completed work and testing report](PROJECT_REPORT.md).
+Read the [event rules and submission steps](showcase/qwen-local-hackathon-2026/).
 
 ## Pick your path
 
@@ -80,8 +96,6 @@ See the [decision tree and comparison](guides/choose-your-tool.md).
 
 Each includes 60 original MIT-licensed examples: 40 for training, 10 for validation and 10 for held-out evaluation.
 
-[Measured Colab T4 run](recipes/json-extractor/results/2026-11-21-t4/): the JSON extractor improved from **2/10 to 7/10 exact matches** on its held-out examples after **80 seconds of training**. The report includes every before/after answer and remaining error.
-
 ## Community showcase
 
 <!-- SHOWCASE:START -->
@@ -111,3 +125,5 @@ Built for the community by M Junaid, Qwen Ambassador and organizer of **Qwen Pak
 Thanks to [Qwen](https://github.com/QwenLM), [Unsloth](https://github.com/unslothai/unsloth), [MLX](https://github.com/ml-explore/mlx-lm), [LLaMA-Factory](https://github.com/hiyouga/LLaMA-Factory), [ms-swift](https://github.com/modelscope/ms-swift), [Axolotl](https://github.com/axolotl-ai-cloud/axolotl), [TRL](https://github.com/huggingface/trl), [PEFT](https://github.com/huggingface/peft), [llama.cpp](https://github.com/ggml-org/llama.cpp), [Ollama](https://github.com/ollama/ollama), [LM Studio](https://lmstudio.ai/) and [vLLM](https://github.com/vllm-project/vllm).
 
 If this helped you train your first model, a star helps other people find it.
+
+[Work and testing report](PROJECT_REPORT.md) · [Maintainer notes](MAINTAINER_NOTES.md)
