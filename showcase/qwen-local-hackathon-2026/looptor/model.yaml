@@ -17,7 +17,7 @@ model_link: 'https://huggingface.co/Daimx1214/looptor-1.7b'
 quantization: 'GGUF Q4_K_M'
 runtime: 'Ollama (100% local, works offline)'
 hardware_tested: 'Ollama on CPU: AMD EPYC shared cloud VM, ~1.5 vCPU, 7 GB RAM (GGUF Q4_K_M, ~4 tok/s); trained on free Kaggle T4 GPU'
-demo_video: 'https://www.youtube.com/watch?v=6ZOiyyfF4To'
+demo_video: 'https://www.youtube.com/watch?v=PR28WXYgqDA'
 repo_link: 'https://github.com/Daimx1214/looptor'
 before_after:
   prompt: 'Ahmed is taller than Omar. Omar is taller than Fatima. Who is the shortest of the three? Explain the chain of comparisons carefully.'
